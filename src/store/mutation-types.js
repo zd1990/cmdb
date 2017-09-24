@@ -1,0 +1,2 @@
+export const RECODE_USER_NAME = 'RECODE_USER_NAME'
+export const RECODE_USER_ROLE = 'RECODE_USER_ROLE'
