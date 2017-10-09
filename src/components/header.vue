@@ -22,7 +22,7 @@
   @import "../style/common";
 
   .head_contain {
-    height: 80px;
+    height: 60px;
     width: 100%;
     background-color: #333333;
   }
@@ -30,7 +30,7 @@
   .head_name {
     float: left;
     margin: {
-      top: 20px;
+      top: 15px;
       left: 15px;
     }
   ;
@@ -42,7 +42,7 @@
   .head_info {
     float: right;
     margin: {
-      top: 20px;
+      top: 15px;
       right: 30px;
     }
     button {
