@@ -6,7 +6,14 @@ import getters from './getters'
 
 Vue.use(Vuex)
 
-const state = {}
+var totalHeight = document.documentElement.clientHeight
+var headerHeight = 60
+const state = {
+  'uname': '',
+  'totalHeight': totalHeight,
+  'headerHeight': headerHeight,
+  'bodyHeight': totalHeight - headerHeight
+}
 
 export default new Vuex.Store({
   state,

@@ -1,19 +1,31 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/Hello'
+import errpage from '../page/errorpage'
 import login from '../page/login/login'
 import common from '../page/common'
 import home from '../page/home/home'
 import cmdb from '../page/cmdb/cmdb'
+import sql from '../page/sql/sql'
+import test from '../page/test/test_highlight'
+import axios from 'axios'
+import {UrlsCheckLogin} from '../page/urls'
 
 Vue.use(Router)
+axios.defaults.withCredentials = true
+axios.defaults.headers.common['Content-type'] = 'application/json'
+axios.defaults.headers.common['Access-Control-Allow-Credentials'] = true
 
 export default new Router({
   routes: [
     {
+      path: '/errorpage',
+      name: 'errorpage',
+      component: errpage
+    },
+    {
       path: '/test',
       name: 'test',
-      component: Hello
+      component: test
     },
     {
       path: '/login',
@@ -37,8 +49,28 @@ export default new Router({
           path: 'cmdb',
           name: 'cmdb',
           component: cmdb
+        },
+        {
+          path: 'sql',
+          name: 'sql',
+          component: sql
         }
-      ]
+      ],
+      beforeEnter: (to, from, next) => {           // 跳转之前通过cookie检测是否登入，如果没有则跳转到登入界面
+        console.log('go to %s', from)
+        axios.get(UrlsCheckLogin).then(function (response) {
+          let ret = response.data.ret
+          if (ret === 0) {
+            next()
+          } else {
+            next('/login')
+          }
+        }).catch(function (error) {
+          console.log('check login err')
+          console.log(error)
+          next('/errorpage')
+        })
+      }
     }
   ]
 })

@@ -3,7 +3,7 @@
     <head-top></head-top>
     <el-row>
       <el-col :span="3">
-        <nav-side :style="{height: height + 'px'}"></nav-side>
+        <nav-side :style="{height: bodyHeight + 'px'}"></nav-side>
       </el-col>
       <el-col :span="21">
         <router-view></router-view>
@@ -13,17 +13,17 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex'
   import headTop from '../components/header'
   import navSide from '../components/side'
   import ElCol from 'element-ui/packages/col/src/col'
   export default {
     data () {
       return {
-        height: this.$height
       }
     },
-    beforeCreate () {
-      this.$height = document.documentElement.clientHeight - 80
+    computed: {
+      ...mapState(['bodyHeight'])
     },
     components: {
       ElCol,

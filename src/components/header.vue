@@ -1,5 +1,5 @@
 <template>
-  <div class="head_contain">
+  <div class="head_contain" :style="{height:headerHeight+'px'}">
     <div class="head_name">
       <span><h2>数据库管理平台</h2></span>
     </div>
@@ -15,14 +15,21 @@
 </template>
 
 <script>
-  export default {}
+  import {mapState} from 'vuex'
+  export default {
+    data () {
+      return {}
+    },
+    computed: {
+      ...mapState(['headerHeight'])
+    }
+  }
 </script>
 
 <style lang="scss">
   @import "../style/common";
 
   .head_contain {
-    height: 60px;
     width: 100%;
     background-color: #333333;
   }

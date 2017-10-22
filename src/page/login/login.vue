@@ -1,17 +1,18 @@
 <template>
-  <div class="login_container" :style="{height: height + 'px'}">
+  <div class="login_container" :style="{height: totalHeight + 'px'}">
     <div class="login_child_container">
       <table class="left">
         <tr>
           <td>用户名</td>
-          <td><input type="text" v-model="uname"></td>
+          <td><input type="text" v-model="username"></td>
         </tr>
         <tr>
           <td>密码</td>
           <td><input type="password" v-model="pw"></td>
         </tr>
       </table>
-      <el-button class="left" @click="login_in" style="margin-left: 10px;margin-top: 10px" :disabled="disable">登入</el-button>
+      <el-button class="left" @click="login_in" style="margin-left: 10px;margin-top: 10px" :disabled="disable">登入
+      </el-button>
     </div>
   </div>
 </template>
@@ -19,57 +20,62 @@
 <script>
   import ElButton from '../../../node_modules/element-ui/packages/button/src/button'
   import {UrlsLoginIn} from '../urls'
+  import {mapState} from 'vuex'
   export default {
     components: {ElButton},
     data () {
       return {
-        height: this.$height,
         disable: true,
-        uname: '',
-        pw: ''
+        pw: '',
+        username: ''
       }
     },
-    beforeCreate () {
-      this.$height = document.documentElement.clientHeight
-      console.log(this.$height)
-    },
     watch: {
-      uname: function (newname) {   // 判断按钮是否禁用
+      username: function (newname) {   // 判断按钮是否禁用
         console.log(newname)
         if (newname !== '' && this.pw !== '') {
           this.disable = false
+        } else if (newname === '') {
+          this.disable = true
         }
       },
       pw: function (newpw) {
-        if (newpw !== '' && this.uname !== '') {
+        if (newpw !== '' && this.username !== '') {
           this.disable = false
+        } else if (newpw === '') {
+          this.disable = true
         }
       }
     },
     methods: {
+//      ...mapMutations(
+//        ['RECODE_USER_NAME']
+//      ),
       login_in () {   // 登入方法
-        console.log(this.uname)
+        console.log(this.username)
         console.log(this.pw)
         console.log(UrlsLoginIn)
         var _this = this
         this.$ajax.post(UrlsLoginIn, {
-          username: this.uname,
+          username: this.username,
           password: this.pw
-        }, {
-          headers: {'Content-type': 'application/json', 'Access-Control-Allow-Credentials': true},
-          withCredentials: true
         })
           .then(function (response) {
             console.log(response)
             let ret = response.data.ret
             if (ret === 0) {
               console.log('登入成功')
+              _this.$store.commit('RECODE_USER_NAME', _this.username)
+//              _this.uname = _this.username
               _this.$router.push({name: 'home'})
             } else if (ret === 1 || ret === 2) {
               _this.$message.error('账号或密码错误')
             }
           })
       }
+    },
+    computed: {
+      ...mapState(['totalHeight'])
     }
   }
 </script>
