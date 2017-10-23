@@ -80,6 +80,12 @@
         let _this = this
         this.$ajax.get(UrlsGetServer, {params: {format: 'json'}}).then(function (response) {
           _this.tableData = response.data
+        }).catch(error => {
+          _this.$message({
+            message: '未知错误',
+            type: 'error'
+          })
+          console.log(error)
         })
       }
     }
@@ -94,6 +100,7 @@
     }
     margin-top: 10px;
     margin-right: 10px;
+    margin-bottom: 10px;
   }
 
   .cmdbtab {

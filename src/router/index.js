@@ -3,10 +3,10 @@ import Router from 'vue-router'
 import errpage from '../page/errorpage'
 import login from '../page/login/login'
 import common from '../page/common'
-import home from '../page/home/home'
+import tree from '../page/tree/tree'
 import cmdb from '../page/cmdb/cmdb'
 import sql from '../page/sql/sql'
-import test from '../page/test/test_highlight'
+import test from '../page/test/test_tree'
 import axios from 'axios'
 import {UrlsCheckLogin} from '../page/urls'
 
@@ -41,9 +41,9 @@ export default new Router({
           redirect: 'home'
         },
         {
-          path: 'home',
-          name: 'home',
-          component: home
+          path: 'tree',
+          name: 'tree',
+          component: tree
         },
         {
           path: 'cmdb',
