@@ -6,16 +6,27 @@
           <el-form-item label="sql名称" prop="name">
             <el-input v-model="ruleForm.name"></el-input>
           </el-form-item>
-          <el-form-item label="sql类型" prop="type">
+          <el-form-item label="sql类型" prop="sqltype">
             <el-select v-model="ruleForm.sqltype" placeholder="请选择sql类型" class="sql_select">
               <el-option label="DDl" value="ddl"></el-option>
               <el-option label="DML" value="dml"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="数据库地址" prop="hosts">
+            <el-select v-model="ruleForm.hosts" multiple filterable remote placeholder="请输入关键词"
+                       :remote-method="remoteMethod"
+                       :loading="loading" style="width: 100%">
+              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="数据库名" prop="dbname">
+            <el-input v-model="ruleForm.dbname" class="sql_select"></el-input>
+          </el-form-item>
           <el-form-item label="sql内容" prop="desc" style="text-align: left">
             <!--<el-input type="textarea" v-model="ruleForm.desc" class="sql_txtinput"></el-input>-->
             <editor v-model="ruleForm.desc" @init="editorInit" lang="sql" theme="chrome" height="500"
-                    class="edit" ></editor>
+                    class="edit"></editor>
           </el-form-item>
           <el-button type="primary" @click="submitForm('test')">测试</el-button>
           <el-button type="primary" @click="submitForm('put')">提交</el-button>
@@ -33,15 +44,21 @@
 
 <script>
   import {mapState} from 'vuex'
-  import {UrlsExecSql, UrlsGetRet} from '../urls'
+  import {UrlsExecSql, UrlsGetRet, UrlsServer} from '../urls'
   export default {
     data () {
       return {
         hashList: [],
+        options: [],
+        list: [],
+        loading: false,
         ruleForm: {
           name: '',
           sqltype: '',
-          desc: ''
+          desc: '',
+          dbname: '',
+          hosts: [],
+          host_flag: ''
         },
         sqlRet: '',
         rules: {
@@ -54,6 +71,12 @@
           ],
           desc: [
             {required: true, message: '请填写活动形式', trigger: 'blur'}
+          ],
+          host_flag: [
+            {required: true, message: '请选择数据库', trigger: 'blur'}
+          ],
+          dbname: [
+            {required: true, message: '请填写数据库名', trigger: 'blur'}
           ]
         }
       }
@@ -70,12 +93,46 @@
     components: {editor: require('vue2-ace-editor-support-chinese')},
     methods: {
       initData () {
+        let _this = this
+        this.$ajax.get(UrlsServer).then(function (response) {
+          _this.states = response.data.map(item => {
+            return item.name
+          })
+          _this.list = _this.states.map(item => {
+            return {value: item, label: item}
+          })
+        }).catch(error => {
+          console.log(error)
+          this.$message({
+            message: error,
+            type: 'error'
+          })
+        })
       },
       editorInit: function (editor) {
         require('vue2-ace-editor-support-chinese/node_modules/brace/mode/sql')
         require('vue2-ace-editor-support-chinese/node_modules/brace/theme/chrome')
       },
+      remoteMethod (query) {
+        if (query !== '') {
+          this.loading = true
+          setTimeout(() => {
+            this.loading = false
+            this.options = this.list.filter(item => {
+              return item.label.toLowerCase()
+                  .indexOf(query.toLowerCase()) > -1
+            })
+          }, 200)
+        } else {
+          this.options = []
+        }
+      },
       submitForm (modle) {
+        if (this.ruleForm.hosts) {
+          this.ruleForm.host_flag = '1'
+        } else {
+          this.ruleForm.host_flag = ''
+        }
         this.$refs['ruleForm'].validate((valid) => {
           if (valid) {
             console.log('sucess')
@@ -88,15 +145,16 @@
             }
           } else {
             console.log('faild')
+            console.log(this.ruleForm.hosts)
           }
         })
       },
       submitSql (sql, exec) {
-        var _this = this
+        let _this = this
         _this.sqlRet = ''
         this.$ajax.post(UrlsExecSql, {
-          host: ['172.22.23.161:3306'],
-          databases: 'mysql',
+          host: _this.ruleForm.hosts,
+          databases: _this.ruleForm.dbname,
           cmd: sql,
           exec: exec
         }).then(function (response) {
@@ -107,7 +165,6 @@
             _this.$message.err(msg)
           } else if (ret === 0) {
             _this.hashList = response.data.hash_list
-            console.log(_this.hashList)
             _this.$message({
               message: '执行成功，等待结果',
               type: 'success'

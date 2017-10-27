@@ -1,48 +1,33 @@
 <template>
-  <div>
-    <div class="tree">
-      <li>
-        <div
-          :class="{bold: isFolder}"
-          @click="toggle"
-          @dblclick="changeType">
-          {{model.name}}
-      <span v-if="isFolder">[{{open ? '-' : '+'}}]</span>
-        </div>
-        <ul v-show="open" v-if="isFolder">
-          <item
-            class="item"
-            v-for="model in model.children"
-            :model="model">
-          </item>
-          <li @click="addChild">+</li>
-        </ul>
-      </li>
-    </div>
+  <div class="treediv">
+    <ul id="demo">
+      <item
+        class="item"
+        :model="treeData">
+      </item>
+    </ul>
   </div>
 </template>
 
 <script>
-  import {UrlsGetGroup} from '../urls'
+  import item from '../../components/tree'
+  import {UrlsGroup} from '../urls'
   export default {
     data () {
       return {
-        datas: [],
-        defaultProps: {
-          children: 'children',
-          label: 'label'
-        }
+        treeData: {}
       }
     },
+    components: {item},
     created () {
       this.initData()
     },
     methods: {
       initData () {
         let _this = this
-        let url = UrlsGetGroup + 'root/'
+        let url = UrlsGroup + 'root/'
         this.$ajax.get(url, {params: {format: 'json'}}).then(function (response) {
-          _this.datas = response.data
+          _this.treeData = response.data
         }).catch(error => {
           _this.$message({
             message: '未知错误',
@@ -56,5 +41,8 @@
 </script>
 
 <style lang="scss">
-
+.treediv {
+  padding-top: 10px;
+  padding-left: 10px;
+}
 </style>

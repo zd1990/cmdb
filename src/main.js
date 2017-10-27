@@ -17,7 +17,7 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 Vue.component('icon', Icon)
 axios.defaults.withCredentials = true
-axios.defaults.headers.common['Content-type'] = 'application/json'
+// axios.defaults.headers.common['Content-type'] = 'application/json'
 axios.defaults.headers.common['Access-Control-Allow-Credentials'] = true
 Vue.prototype.$ajax = axios
 Vue.use(ElementUI)

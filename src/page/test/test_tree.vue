@@ -9,40 +9,32 @@
 
 <script>
   import item from '../../components/tree'
+  import {UrlsGroup} from '../urls'
   export default {
     data () {
       return {
-        treeData: {
-          name: 'My Tree',
-          children: [
-            {name: 'hello'},
-            {name: 'wat'},
-            {
-              name: 'child folder',
-              children: [
-                {
-                  name: 'child folder',
-                  children: [
-                    {name: 'hello'},
-                    {name: 'wat'}
-                  ]
-                },
-                {name: 'hello'},
-                {name: 'wat'},
-                {
-                  name: 'child folder',
-                  children: [
-                    {name: 'hello'},
-                    {name: 'wat'}
-                  ]
-                }
-              ]
-            }
-          ]
-        }
+        treeData: {}
       }
     },
-    components: {item}
+    components: {item},
+    created () {
+      this.initData()
+    },
+    methods: {
+      initData () {
+        let _this = this
+        let url = UrlsGroup + 'root/'
+        this.$ajax.get(url, {params: {format: 'json'}}).then(function (response) {
+          _this.treeData = response.data
+        }).catch(error => {
+          _this.$message({
+            message: '未知错误',
+            type: 'error'
+          })
+          console.log(error)
+        })
+      }
+    }
   }
 </script>
 

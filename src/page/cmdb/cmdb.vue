@@ -62,7 +62,7 @@
 </template>
 
 <script>
-  import {UrlsGetServer} from '../urls'
+  import {UrlsServer} from '../urls'
   export default {
     data () {
       return {
@@ -78,14 +78,13 @@
       },
       initData () {
         let _this = this
-        this.$ajax.get(UrlsGetServer, {params: {format: 'json'}}).then(function (response) {
+        this.$ajax.get(UrlsServer, {params: {format: 'json'}}).then(function (response) {
           _this.tableData = response.data
         }).catch(error => {
           _this.$message({
-            message: '未知错误',
+            message: error,
             type: 'error'
           })
-          console.log(error)
         })
       }
     }

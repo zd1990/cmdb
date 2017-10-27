@@ -11,9 +11,9 @@ import axios from 'axios'
 import {UrlsCheckLogin} from '../page/urls'
 
 Vue.use(Router)
-axios.defaults.withCredentials = true
-axios.defaults.headers.common['Content-type'] = 'application/json'
-axios.defaults.headers.common['Access-Control-Allow-Credentials'] = true
+// axios.defaults.withCredentials = true
+// axios.defaults.headers.common['Content-type'] = 'application/json'
+// axios.defaults.headers.common['Access-Control-Allow-Credentials'] = true
 
 export default new Router({
   routes: [
