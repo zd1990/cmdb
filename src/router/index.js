@@ -7,8 +7,10 @@ import tree from '../page/tree/tree'
 import cmdb from '../page/cmdb/cmdb'
 import sql from '../page/sql/sql'
 import test from '../page/test/test_tree'
+import task from '../page/tasklog/tasklog'
 import axios from 'axios'
 import {UrlsCheckLogin} from '../page/urls'
+import store from '../store'
 
 Vue.use(Router)
 // axios.defaults.withCredentials = true
@@ -54,6 +56,11 @@ export default new Router({
           path: 'sql',
           name: 'sql',
           component: sql
+        },
+        {
+          path: 'task',
+          name: 'task',
+          component: task
         }
       ],
       beforeEnter: (to, from, next) => {           // 跳转之前通过cookie检测是否登入，如果没有则跳转到登入界面
@@ -61,6 +68,10 @@ export default new Router({
         axios.get(UrlsCheckLogin).then(function (response) {
           let ret = response.data.ret
           if (ret === 0) {
+            let username = response.data.username
+            let role = response.data.role
+            store.commit('RECODE_USER_NAME', username)
+            store.commit('RECODE_USER_ROLE', role)
             next()
           } else {
             next('/login')

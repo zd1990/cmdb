@@ -8,7 +8,7 @@
         <el-menu-item index="sql">sql申请</el-menu-item>
       </el-menu-item-group>
     </el-submenu>
-    <el-menu-item index="2"><i class="el-icon-menu"></i>任务申请信息</el-menu-item>
+    <el-menu-item index="task"><i class="el-icon-menu"></i>任务申请信息</el-menu-item>
     <el-menu-item index="3"><i class="el-icon-setting"></i>用户信息表&#8195</el-menu-item>
     <el-menu-item v-if="role=='admin'" index="4"><i class="el-icon-setting"></i>sql省查&#8195&#8195</el-menu-item>
     <el-menu-item v-if="role=='admin'" index="4"><i class="el-icon-setting"></i>用户管理&#8195&#8195</el-menu-item>

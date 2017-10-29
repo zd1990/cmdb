@@ -34,6 +34,54 @@
       </div>
     </el-col>
     <el-col :span="12">
+      <div class="sql_tab">
+        <el-table
+          :data="tableData"
+          height=300
+          border
+          style="width: 100%"
+          :stripe="true"
+          :default-sort="{prop: 'date',order: 'descending'}"
+        >
+          <el-table-column
+            prop="name"
+            label="名称"
+            sortable
+            header-align="center"
+            :show-overflow-tooltip="true"
+            width="150">
+          </el-table-column>
+          <el-table-column
+            prop="database"
+            label="数据库"
+            sortable
+            header-align="center"
+            :show-overflow-tooltip="true"
+            width="150">
+          </el-table-column>
+          <el-table-column
+            prop="hashId"
+            label="id"
+            sortable
+            header-align="center"
+            :show-overflow-tooltip="true"
+            width="150">
+          </el-table-column>
+          <el-table-column
+            prop="type"
+            label="类型"
+            sortable
+            header-align="center"
+            width="150">
+          </el-table-column>
+          <el-table-column
+            prop="status"
+            label="状态"
+            sortable
+            header-align="center">
+          </el-table-column>
+        </el-table>
+      </div>
       <div class="ret_div">
         <el-input type="textarea" resize="none" :disabled="true" v-model="sqlRet"
                   :rows="rownum"></el-input>
@@ -44,10 +92,11 @@
 
 <script>
   import {mapState} from 'vuex'
-  import {UrlsExecSql, UrlsGetRet, UrlsServer} from '../urls'
+  import {UrlsExecSql, UrlsServer, UrlsGetSqlLog} from '../urls'
   export default {
     data () {
       return {
+        tableData: [],
         hashList: [],
         options: [],
         list: [],
@@ -85,9 +134,9 @@
       this.initData()
     },
     computed: {
-      ...mapState(['bodyHeight']),
+      ...mapState(['bodyHeight', 'uname', 'urole']),
       rownum: function () {
-        return this.bodyHeight / 21
+        return (this.bodyHeight - 300) / 21
       }
     },
     components: {editor: require('vue2-ace-editor-support-chinese')},
@@ -108,6 +157,7 @@
             type: 'error'
           })
         })
+        this.getTable()
       },
       editorInit: function (editor) {
         require('vue2-ace-editor-support-chinese/node_modules/brace/mode/sql')
@@ -138,10 +188,10 @@
             console.log('sucess')
             if (modle === 'test') {
               console.log('test')
-              this.submitSql(this.ruleForm.desc, 0)
+              this.submitSql(this.ruleForm.desc, 0, this.ruleForm.name)
             } else if (modle === 'put') {
               console.log('put')
-              this.submitSql(this.ruleForm.desc, 1)
+              this.submitSql(this.ruleForm.desc, 1, this.ruleForm.name)
             }
           } else {
             console.log('faild')
@@ -149,14 +199,15 @@
           }
         })
       },
-      submitSql (sql, exec) {
+      submitSql (sql, exec, name) {
         let _this = this
         _this.sqlRet = ''
         this.$ajax.post(UrlsExecSql, {
           host: _this.ruleForm.hosts,
           databases: _this.ruleForm.dbname,
           cmd: sql,
-          exec: exec
+          exec: exec,
+          name: name
         }).then(function (response) {
           console.log(response)
           let ret = response.data.ret
@@ -169,6 +220,7 @@
               message: '执行成功，等待结果',
               type: 'success'
             })
+            _this.getTable()
             _this.getRet(_this.hashList)
           }
         }).catch(function (error) {
@@ -184,28 +236,23 @@
         tid = setInterval(function () {
           let tmplist = []
           idList.forEach(function (i) {
-            _this.$ajax.get(UrlsGetRet, {
+            _this.$ajax.get(UrlsGetSqlLog + i + '/', {
               params: {
-                hash_id: i
+                format: 'json'
               }
             }).then(function (response) {
               console.log(response)
-              let ret = response.data.ret
-              if (ret === 0) {
-                let tmpret = response.data.sql_info
-                let host = tmpret['host']
-                let description = tmpret['description']
-                let result = tmpret['result']
+              let status = response.data.status
+              if (status !== 0) {
+                let tmpret = response.data
+                let host = tmpret['database']
+                let description = tmpret['des']
+                let result = tmpret['ret']
                 _this.sqlRet += '#########################################################################\n'
                 _this.sqlRet += 'host:    ' + host + '\n' + '描述:    ' + description + '\n' + '结果:    ' + result + '\n'
-              } else if (ret === 1) {
+              } else {
                 console.log('ret is null')
                 tmplist.push(i)
-              } else if (ret === 2) {
-                _this.$message({
-                  message: '未知错误',
-                  type: 'error'
-                })
               }
               idList = tmplist
               if (idList === []) {
@@ -222,6 +269,42 @@
             })
           })
         }, 2000)
+      },
+      getTable () {
+        let _this = this
+        this.$ajax.get(UrlsGetSqlLog, {
+          params: {
+            format: 'json',
+            user: _this.uname,
+            order: '-timeStart',
+            num: 10
+          }
+        }).then(function (response) {
+          response.data.map(item => {
+            if (item.type === 0) {
+              item.type = '测试'
+            } else if (item.type === 1) {
+              item.type = '执行'
+            }
+            if (item.status === 0) {
+              item.status = '正在审核'
+            } else if (item.status === 1) {
+              item.status = '正在执行'
+            } else if (item.status === 2) {
+              item.status = '执行成功'
+            } else if (item.status === 3) {
+              item.status = '执行失败'
+            }
+          })
+          _this.tableData = response.data
+        }).catch(error => {
+          _this.$message({
+            message: '未知错误',
+            type: 'error'
+          })
+          console.log(error)
+        })
+        console.log(_this.tableData)
       }
     }
   }
@@ -238,8 +321,7 @@
     padding-right: 20px;
     .el-textarea__inner {
       height: 500px;
-    }
-  ;
+    };
   }
 
   .sql_select {
@@ -253,6 +335,9 @@
         background-color: rgba(51, 51, 51, 0.85);
       }
     }
+  }
+
+  .sql_tab {
   }
 
 </style>
