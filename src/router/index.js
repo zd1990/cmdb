@@ -8,6 +8,7 @@ import cmdb from '../page/cmdb/cmdb'
 import sql from '../page/sql/sql'
 import test from '../page/test/test_tree'
 import task from '../page/tasklog/tasklog'
+import auth from '../page/auth/auth'
 import axios from 'axios'
 import {UrlsCheckLogin} from '../page/urls'
 import store from '../store'
@@ -61,6 +62,11 @@ export default new Router({
           path: 'task',
           name: 'task',
           component: task
+        },
+        {
+          path: 'auth',
+          name: 'auth',
+          component: auth
         }
       ],
       beforeEnter: (to, from, next) => {           // 跳转之前通过cookie检测是否登入，如果没有则跳转到登入界面

@@ -21,6 +21,7 @@
           label="名称"
           sortable
           header-align="center"
+          :show-overflow-tooltip="true"
           width="280">
         </el-table-column>
         <el-table-column
@@ -28,6 +29,7 @@
           label="域名"
           sortable
           header-align="center"
+          :show-overflow-tooltip="true"
           width="180">
         </el-table-column>
         <el-table-column
@@ -35,6 +37,7 @@
           label="IP"
           sortable
           header-align="center"
+          :show-overflow-tooltip="true"
           width="180">
         </el-table-column>
         <el-table-column
@@ -54,6 +57,7 @@
         <el-table-column
           prop="describe"
           header-align="center"
+          :show-overflow-tooltip="true"
           label="描述">
         </el-table-column>
       </el-table>

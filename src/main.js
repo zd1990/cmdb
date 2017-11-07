@@ -8,7 +8,7 @@ import Icon from 'vue-awesome/components/Icon'
 import ElementUI from 'element-ui'
 // import VueHighlightJS from 'vue-highlightjs'
 import 'element-ui/lib/theme-default/index.css'
-import axios from 'axios'
+import axios from './page/axiospre'
 import App from './App'
 import 'highlight.js/styles/default.css'
 

@@ -7,10 +7,14 @@
             <el-input v-model="ruleForm.name"></el-input>
           </el-form-item>
           <el-form-item label="sql类型" prop="sqltype">
-            <el-select v-model="ruleForm.sqltype" placeholder="请选择sql类型" class="sql_select">
-              <el-option label="DDl" value="ddl"></el-option>
-              <el-option label="DML" value="dml"></el-option>
-            </el-select>
+            <!--<el-select v-model="ruleForm.sqltype" placeholder="请选择sql类型" class="sql_select">-->
+              <!--<el-option label="DDl" value="ddl"></el-option>-->
+              <!--<el-option label="DML" value="dml"></el-option>-->
+            <!--</el-select>-->
+            <el-radio v-model="ruleForm.sqltype" label="ddl" class="sql_select">DDL</el-radio>
+            <el-radio v-model="ruleForm.sqltype" label="dml" class="sql_select">DML</el-radio>
+            <el-radio v-model="ruleForm.sqltype" label="query" class="sql_select">查询</el-radio>
+            <el-radio v-model="ruleForm.sqltype" label="del" class="sql_select">删除</el-radio>
           </el-form-item>
           <el-form-item label="数据库地址" prop="hosts">
             <el-select v-model="ruleForm.hosts" multiple filterable remote placeholder="请输入关键词"
@@ -325,7 +329,6 @@
   }
 
   .sql_select {
-    width: 50%;
     float: left;
   }
 

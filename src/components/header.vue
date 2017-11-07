@@ -4,7 +4,26 @@
       <span><h2>数据库管理平台</h2></span>
     </div>
     <div class="head_info">
-      <button>
+      <el-popover
+        ref="userinfo"
+        placement="bottom"
+        width="200"
+        trigger="click">
+        <table>
+          <tr>
+            <td>用户名:</td>
+            <td>&#8195{{this.$store.state.uname}}</td>
+          </tr>
+          <tr>
+            <td>&#8195角色:</td>
+            <td>&#8195{{this.$store.state.urole}}</td>
+          </tr>
+          <tr>
+              <button>登出</button>
+          </tr>
+        </table>
+      </el-popover>
+      <button v-popover:userinfo>
         <icon name="user" scale="2" style="color: aqua"></icon>
       </button>
       <button>
@@ -22,7 +41,8 @@
     },
     computed: {
       ...mapState(['headerHeight'])
-    }
+    },
+    methods: {}
   }
 </script>
 
