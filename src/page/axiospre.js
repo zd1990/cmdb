@@ -7,9 +7,13 @@ import {Loading, Message} from 'element-ui'
 axios.defaults.timeout = 5000
 // http请求拦截器
 let loadinginstace
+let t
 axios.interceptors.request.use(config => {
   // element ui Loading方法
-  loadinginstace = Loading.service({fullscreen: true, spinner: 'el-icon-loading', background: 'rgba(0, 0, 0, 0)', text: 'Loading'})
+  console.log(config)
+  t = setTimeout(function () {
+    loadinginstace = Loading.service({fullscreen: true})
+  }, 300)
   return config
 }, error => {
   loadinginstace.close()
@@ -20,7 +24,12 @@ axios.interceptors.request.use(config => {
 })
 // http响应拦截器
 axios.interceptors.response.use(data => {      // 响应成功关闭loading
-  loadinginstace.close()
+  console.log('end')
+  clearTimeout(t)
+  try {
+    loadinginstace.close()
+  } catch (err) {
+  }
   return data
 }, error => {
   loadinginstace.close()

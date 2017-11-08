@@ -35,7 +35,7 @@
       ref="multipleTable"
       @selection-change="handleSelectionChange"
       height=450
-              style="width: 100%"
+        style="width: 100%"
       :stripe="true"
       :default-sort="{prop: 'date',order: 'descending'}"
     >
@@ -83,17 +83,20 @@
         </template>
       </el-table-column>
     </el-table>
+    <transfer :group="group"></transfer>
   </div>
 </template>
 
 <script>
-  import {UrlsUser} from '../urls'
+  import {UrlsUser, UrlsGroupWeb} from '../urls'
   import ElButton from '../../../node_modules/element-ui/packages/button/src/button'
+  import transfer from './transfer'
   export default {
-    components: {ElButton},
+    components: {ElButton, transfer},
     data () {
       return {
         tableData: [],
+        group: [],
         search: '',
         delbutton: true,
         multipleSelection: [],
@@ -123,6 +126,20 @@
         let _this = this
         this.$ajax.get(UrlsUser, {params: {msg: 1}}).then(function (response) {
           _this.tableData = response.data
+          _this.$ajax.get(UrlsGroupWeb + 'root/', {
+            params: {
+              format: 'json'
+            }
+          }).then(function (response) {
+            console.log(response)
+            _this.group = response.data.children
+          }).catch(err => {
+            console.log(err)
+            _this.$message({
+              message: '获取组失败',
+              type: 'error'
+            })
+          })
         }).catch(error => {
           console.log(error)
           this.$message({

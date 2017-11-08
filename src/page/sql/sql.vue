@@ -154,6 +154,7 @@
           _this.list = _this.states.map(item => {
             return {value: item, label: item}
           })
+          _this.getTable()
         }).catch(error => {
           console.log(error)
           this.$message({
@@ -161,7 +162,6 @@
             type: 'error'
           })
         })
-        this.getTable()
       },
       editorInit: function (editor) {
         require('vue2-ace-editor-support-chinese/node_modules/brace/mode/sql')
